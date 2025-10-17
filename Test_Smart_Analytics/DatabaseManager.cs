@@ -86,14 +86,11 @@ namespace Test_Smart_Analytics
         {
             string tempName = oldTableName + "_old_" + DateTime.Now.ToString("yyyyMMddHHmmss");
 
-            // 1. Переименовываем старую таблицу
             using (var cmd = new NpgsqlCommand($"ALTER TABLE public.\"{oldTableName}\" RENAME TO \"{tempName}\";", _connection))
                 cmd.ExecuteNonQuery();
 
-            // 2. Создаем новую таблицу
             CreateTable(newTableName, newColumns);
 
-            // 3. Переносим данные по совпадающим полям
             var oldCols = GetTableColumns(tempName);
             var matchingCols = newColumns.FindAll(c => oldCols.Exists(o => o.Name == c.Name));
 
@@ -108,6 +105,14 @@ namespace Test_Smart_Analytics
             // 4. Удаляем старую таблицу
             using (var cmdDrop = new NpgsqlCommand($"DROP TABLE public.\"{tempName}\";", _connection))
                 cmdDrop.ExecuteNonQuery();
+        }
+        
+        public void DropTable(string tableName)
+        {
+            string sql = $"DROP TABLE IF EXISTS public.\"{tableName}\" CASCADE;";
+
+            using var cmd = new NpgsqlCommand(sql, _connection);
+            cmd.ExecuteNonQuery();
         }
 
         public class ColumnDefinition

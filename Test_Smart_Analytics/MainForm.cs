@@ -84,14 +84,11 @@ namespace Test_Smart_Analytics
 
             try
             {
-                // Получаем структуру таблицы
                 var columns = dbManager.GetTableColumns(tableName);
 
-                // Открываем форму редактирования
                 using var form = new CreateTableForm();
                 form.Text = $"Редактирование таблицы: {tableName}";
 
-                // Заполняем текущие поля
                 foreach (var col in columns)
                 {
                     int rowIndex = form.dgvColumns.Rows.Add();
@@ -103,7 +100,6 @@ namespace Test_Smart_Analytics
                 }
                 form.txtTableName.Text = tableName;
 
-                // Если пользователь нажал OK
                 if (form.ShowDialog() == DialogResult.OK)
                 {
                     dbManager.RecreateTable(tableName, form.TableName, form.Columns);
@@ -120,6 +116,40 @@ namespace Test_Smart_Analytics
             }
         }
 
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (listBoxTables.SelectedItem == null)
+            {
+                MessageBox.Show("Выберите таблицу для удаления.", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string tableName = listBoxTables.SelectedItem.ToString();
+
+            var confirm = MessageBox.Show(
+                $"Вы действительно хотите удалить таблицу \"{tableName}\"?\nВсе данные будут потеряны.",
+                "Подтверждение удаления",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (confirm != DialogResult.Yes)
+                return;
+
+            try
+            {
+                dbManager.DropTable(tableName);
+                MessageBox.Show("Таблица успешно удалена!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Обновляем список таблиц
+                var tables = dbManager.GetUserTables();
+                listBoxTables.Items.Clear();
+                listBoxTables.Items.AddRange(tables.ToArray());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при удалении таблицы:\n{ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {

@@ -34,6 +34,7 @@
             nfToolStripMenuItem = new ToolStripMenuItem();
             createToolStripMenuItem = new ToolStripMenuItem();
             editToolStripMenuItem = new ToolStripMenuItem();
+            deleteToolStripMenuItem = new ToolStripMenuItem();
             dataGridViewStructure = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)splitContainerMain).BeginInit();
             splitContainerMain.Panel1.SuspendLayout();
@@ -47,6 +48,7 @@
             // 
             splitContainerMain.Dock = DockStyle.Fill;
             splitContainerMain.Location = new Point(0, 0);
+            splitContainerMain.Margin = new Padding(3, 4, 3, 4);
             splitContainerMain.Name = "splitContainerMain";
             // 
             // splitContainerMain.Panel1
@@ -57,50 +59,60 @@
             // splitContainerMain.Panel2
             // 
             splitContainerMain.Panel2.Controls.Add(dataGridViewStructure);
-            splitContainerMain.Size = new Size(800, 450);
-            splitContainerMain.SplitterDistance = 202;
+            splitContainerMain.Size = new Size(914, 600);
+            splitContainerMain.SplitterDistance = 230;
+            splitContainerMain.SplitterWidth = 5;
             splitContainerMain.TabIndex = 2;
             // 
             // listBoxTables
             // 
             listBoxTables.Dock = DockStyle.Fill;
             listBoxTables.FormattingEnabled = true;
-            listBoxTables.ItemHeight = 15;
-            listBoxTables.Location = new Point(0, 24);
+            listBoxTables.Location = new Point(0, 30);
+            listBoxTables.Margin = new Padding(3, 4, 3, 4);
             listBoxTables.Name = "listBoxTables";
-            listBoxTables.Size = new Size(202, 426);
+            listBoxTables.Size = new Size(230, 570);
             listBoxTables.TabIndex = 0;
             listBoxTables.SelectedIndexChanged += listBoxTables_SelectedIndexChanged;
             // 
             // menuStrip1
             // 
+            menuStrip1.ImageScalingSize = new Size(20, 20);
             menuStrip1.Items.AddRange(new ToolStripItem[] { nfToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(202, 24);
+            menuStrip1.Padding = new Padding(7, 3, 0, 3);
+            menuStrip1.Size = new Size(230, 30);
             menuStrip1.TabIndex = 1;
             menuStrip1.Text = "menuStrip1";
             // 
             // nfToolStripMenuItem
             // 
-            nfToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { createToolStripMenuItem, editToolStripMenuItem });
+            nfToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { createToolStripMenuItem, editToolStripMenuItem, deleteToolStripMenuItem });
             nfToolStripMenuItem.Name = "nfToolStripMenuItem";
-            nfToolStripMenuItem.Size = new Size(66, 20);
+            nfToolStripMenuItem.Size = new Size(82, 24);
             nfToolStripMenuItem.Text = "Таблица";
             // 
             // createToolStripMenuItem
             // 
             createToolStripMenuItem.Name = "createToolStripMenuItem";
-            createToolStripMenuItem.Size = new Size(180, 22);
+            createToolStripMenuItem.Size = new Size(224, 26);
             createToolStripMenuItem.Text = "Создать";
             createToolStripMenuItem.Click += createToolStripMenuItem_Click;
             // 
             // editToolStripMenuItem
             // 
             editToolStripMenuItem.Name = "editToolStripMenuItem";
-            editToolStripMenuItem.Size = new Size(180, 22);
+            editToolStripMenuItem.Size = new Size(224, 26);
             editToolStripMenuItem.Text = "Редактировать";
             editToolStripMenuItem.Click += editToolStripMenuItem_Click;
+            // 
+            // deleteToolStripMenuItem
+            // 
+            deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            deleteToolStripMenuItem.Size = new Size(224, 26);
+            deleteToolStripMenuItem.Text = "Удалить";
+            deleteToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
             // 
             // dataGridViewStructure
             // 
@@ -108,18 +120,21 @@
             dataGridViewStructure.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewStructure.Dock = DockStyle.Fill;
             dataGridViewStructure.Location = new Point(0, 0);
+            dataGridViewStructure.Margin = new Padding(3, 4, 3, 4);
             dataGridViewStructure.Name = "dataGridViewStructure";
             dataGridViewStructure.ReadOnly = true;
-            dataGridViewStructure.Size = new Size(594, 450);
+            dataGridViewStructure.RowHeadersWidth = 51;
+            dataGridViewStructure.Size = new Size(679, 600);
             dataGridViewStructure.TabIndex = 0;
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(914, 600);
             Controls.Add(splitContainerMain);
             MainMenuStrip = menuStrip1;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "MainForm";
             Text = "Управление БД";
             FormClosed += MainForm_FormClosed;
@@ -144,5 +159,6 @@
         private ToolStripMenuItem nfToolStripMenuItem;
         private ToolStripMenuItem createToolStripMenuItem;
         private ToolStripMenuItem editToolStripMenuItem;
+        private ToolStripMenuItem deleteToolStripMenuItem;
     }
 }
