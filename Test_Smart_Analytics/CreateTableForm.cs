@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Test_Smart_Analytics.DatabaseManager;
 
@@ -13,91 +7,35 @@ namespace Test_Smart_Analytics
 {
     public partial class CreateTableForm : Form
     {
-        public DataGridView dgvColumns => _dgvColumns;
-        public TextBox txtTableName => _txtTableName;
-
         public string TableName => txtTableName.Text.Trim();
         public List<ColumnDefinition> Columns { get; private set; } = new();
-
-        private TextBox _txtTableName;
-        private DataGridView _dgvColumns;
-        private Button btnOk;
-        private Button btnCancel;
-        private Button btnMoveUp;
-        private Button btnMoveDown;
 
         public CreateTableForm()
         {
             InitializeComponent();
-            InitUI();
+
+            this.dgvColumns.DataError += (s, e) =>
+            {
+                e.ThrowException = false;
+
+                string columnName = dgvColumns.Columns[e.ColumnIndex].HeaderText;
+                MessageBox.Show(
+                    this,
+                    $"Недопустимое значение в столбце '{columnName}'.\n" +
+                    "Выбрано значение по умолчанию.",
+                    "Ошибка значения",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+
+                // Можно автоматически установить значение по умолчанию
+                if (dgvColumns.Columns[e.ColumnIndex] is DataGridViewComboBoxColumn comboCol && e.RowIndex >= 0)
+                {
+                    dgvColumns.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = comboCol.Items[0]; // первое значение списка
+                }
+            };
         }
 
-        private void InitUI()
-        {
-            Text = "Создание таблицы";
-            Width = 700;
-            Height = 450;
-
-            Label lbl = new Label { Text = "Имя таблицы:", Dock = DockStyle.Top, Height = 25 };
-            _txtTableName = new TextBox { Dock = DockStyle.Top, Height = 25 };
-
-            _dgvColumns = new DataGridView
-            {
-                Dock = DockStyle.Fill,
-                AllowUserToAddRows = true,
-                AllowUserToDeleteRows = true,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect
-            };
-
-            dgvColumns.Columns.Add("Name", "Имя поля");
-            dgvColumns.Columns.Add(new DataGridViewComboBoxColumn()
-            {
-                HeaderText = "Тип данных",
-                Name = "Type",
-                DataSource = new List<string> { "integer", "bigint", "double precision", "text", "timestamp" }
-            });
-            dgvColumns.Columns.Add(new DataGridViewCheckBoxColumn()
-            {
-                HeaderText = "Первичный ключ",
-                Name = "IsPrimaryKey"
-            });
-            dgvColumns.Columns.Add(new DataGridViewCheckBoxColumn()
-            {
-                HeaderText = "NOT NULL",
-                Name = "NotNull"
-            });
-
-            // Кнопки управления
-            FlowLayoutPanel buttonsPanel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Bottom,
-                Height = 40,
-                FlowDirection = FlowDirection.RightToLeft
-            };
-
-            btnOk = new Button { Text = "Создать", Width = 100 };
-            btnCancel = new Button { Text = "Отмена", Width = 100 };
-            btnMoveUp = new Button { Text = "⬆️ Вверх", Width = 100 };
-            btnMoveDown = new Button { Text = "⬇️ Вниз", Width = 100 };
-
-            btnOk.Click += BtnOk_Click;
-            btnCancel.Click += (s, e) => DialogResult = DialogResult.Cancel;
-            btnMoveUp.Click += BtnMoveUp_Click;
-            btnMoveDown.Click += BtnMoveDown_Click;
-
-            buttonsPanel.Controls.Add(btnCancel);
-            buttonsPanel.Controls.Add(btnOk);
-            buttonsPanel.Controls.Add(btnMoveDown);
-            buttonsPanel.Controls.Add(btnMoveUp);
-
-            Controls.Add(dgvColumns);
-            Controls.Add(txtTableName);
-            Controls.Add(lbl);
-            Controls.Add(buttonsPanel);
-        }
-
-        // === Перемещение строк вверх ===
         private void BtnMoveUp_Click(object sender, EventArgs e)
         {
             if (dgvColumns.CurrentRow == null || dgvColumns.CurrentRow.Index == 0)
@@ -110,10 +48,9 @@ namespace Test_Smart_Analytics
             dgvColumns.CurrentCell = dgvColumns.Rows[index - 1].Cells[0];
         }
 
-        // === Перемещение строк вниз ===
         private void BtnMoveDown_Click(object sender, EventArgs e)
         {
-            if (dgvColumns.CurrentRow == null || dgvColumns.CurrentRow.Index == dgvColumns.Rows.Count - 2)
+            if (dgvColumns.CurrentRow == null || dgvColumns.CurrentRow.Index >= dgvColumns.Rows.Count - 2)
                 return;
 
             int index = dgvColumns.CurrentRow.Index;

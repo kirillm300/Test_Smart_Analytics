@@ -28,19 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             splitContainerMain = new SplitContainer();
             listBoxTables = new ListBox();
-            menuStrip1 = new MenuStrip();
-            nfToolStripMenuItem = new ToolStripMenuItem();
-            createToolStripMenuItem = new ToolStripMenuItem();
+            contextMenuStripTables = new ContextMenuStrip(components);
             editToolStripMenuItem = new ToolStripMenuItem();
             deleteToolStripMenuItem = new ToolStripMenuItem();
+            createToolStripMenuItem = new ToolStripMenuItem();
             dataGridViewStructure = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)splitContainerMain).BeginInit();
             splitContainerMain.Panel1.SuspendLayout();
             splitContainerMain.Panel2.SuspendLayout();
             splitContainerMain.SuspendLayout();
-            menuStrip1.SuspendLayout();
+            contextMenuStripTables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewStructure).BeginInit();
             SuspendLayout();
             // 
@@ -54,7 +54,6 @@
             // splitContainerMain.Panel1
             // 
             splitContainerMain.Panel1.Controls.Add(listBoxTables);
-            splitContainerMain.Panel1.Controls.Add(menuStrip1);
             // 
             // splitContainerMain.Panel2
             // 
@@ -66,53 +65,43 @@
             // 
             // listBoxTables
             // 
+            listBoxTables.ContextMenuStrip = contextMenuStripTables;
             listBoxTables.Dock = DockStyle.Fill;
             listBoxTables.FormattingEnabled = true;
-            listBoxTables.Location = new Point(0, 30);
+            listBoxTables.Location = new Point(0, 0);
             listBoxTables.Margin = new Padding(3, 4, 3, 4);
             listBoxTables.Name = "listBoxTables";
-            listBoxTables.Size = new Size(230, 570);
+            listBoxTables.Size = new Size(230, 600);
             listBoxTables.TabIndex = 0;
             listBoxTables.SelectedIndexChanged += listBoxTables_SelectedIndexChanged;
             // 
-            // menuStrip1
+            // contextMenuStripTables
             // 
-            menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { nfToolStripMenuItem });
-            menuStrip1.Location = new Point(0, 0);
-            menuStrip1.Name = "menuStrip1";
-            menuStrip1.Padding = new Padding(7, 3, 0, 3);
-            menuStrip1.Size = new Size(230, 30);
-            menuStrip1.TabIndex = 1;
-            menuStrip1.Text = "menuStrip1";
-            // 
-            // nfToolStripMenuItem
-            // 
-            nfToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { createToolStripMenuItem, editToolStripMenuItem, deleteToolStripMenuItem });
-            nfToolStripMenuItem.Name = "nfToolStripMenuItem";
-            nfToolStripMenuItem.Size = new Size(82, 24);
-            nfToolStripMenuItem.Text = "Таблица";
-            // 
-            // createToolStripMenuItem
-            // 
-            createToolStripMenuItem.Name = "createToolStripMenuItem";
-            createToolStripMenuItem.Size = new Size(224, 26);
-            createToolStripMenuItem.Text = "Создать";
-            createToolStripMenuItem.Click += createToolStripMenuItem_Click;
+            contextMenuStripTables.ImageScalingSize = new Size(20, 20);
+            contextMenuStripTables.Items.AddRange(new ToolStripItem[] { editToolStripMenuItem, deleteToolStripMenuItem, createToolStripMenuItem });
+            contextMenuStripTables.Name = "contextMenuStripTables";
+            contextMenuStripTables.Size = new Size(241, 76);
             // 
             // editToolStripMenuItem
             // 
             editToolStripMenuItem.Name = "editToolStripMenuItem";
-            editToolStripMenuItem.Size = new Size(224, 26);
-            editToolStripMenuItem.Text = "Редактировать";
+            editToolStripMenuItem.Size = new Size(240, 24);
+            editToolStripMenuItem.Text = "Редактировать таблицу";
             editToolStripMenuItem.Click += editToolStripMenuItem_Click;
             // 
             // deleteToolStripMenuItem
             // 
             deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            deleteToolStripMenuItem.Size = new Size(224, 26);
-            deleteToolStripMenuItem.Text = "Удалить";
+            deleteToolStripMenuItem.Size = new Size(240, 24);
+            deleteToolStripMenuItem.Text = "Удалить таблицу";
             deleteToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
+            // 
+            // createToolStripMenuItem
+            // 
+            createToolStripMenuItem.Name = "createToolStripMenuItem";
+            createToolStripMenuItem.Size = new Size(240, 24);
+            createToolStripMenuItem.Text = "Добавить таблицу в БД";
+            createToolStripMenuItem.Click += createToolStripMenuItem_Click;
             // 
             // dataGridViewStructure
             // 
@@ -133,19 +122,17 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(914, 600);
             Controls.Add(splitContainerMain);
-            MainMenuStrip = menuStrip1;
             Margin = new Padding(3, 4, 3, 4);
             Name = "MainForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Управление БД";
             FormClosed += MainForm_FormClosed;
             Load += MainForm_Load;
             splitContainerMain.Panel1.ResumeLayout(false);
-            splitContainerMain.Panel1.PerformLayout();
             splitContainerMain.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainerMain).EndInit();
             splitContainerMain.ResumeLayout(false);
-            menuStrip1.ResumeLayout(false);
-            menuStrip1.PerformLayout();
+            contextMenuStripTables.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridViewStructure).EndInit();
             ResumeLayout(false);
         }
@@ -155,10 +142,9 @@
         private ListBox listBoxTables;
         private SplitContainer splitContainerMain;
         private DataGridView dataGridViewStructure;
-        private MenuStrip menuStrip1;
-        private ToolStripMenuItem nfToolStripMenuItem;
-        private ToolStripMenuItem createToolStripMenuItem;
+        private ContextMenuStrip contextMenuStripTables;
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem deleteToolStripMenuItem;
+        private ToolStripMenuItem createToolStripMenuItem;
     }
 }
