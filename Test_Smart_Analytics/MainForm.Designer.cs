@@ -28,12 +28,77 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            splitContainerMain = new SplitContainer();
+            listBoxTables = new ListBox();
+            dataGridViewStructure = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)splitContainerMain).BeginInit();
+            splitContainerMain.Panel1.SuspendLayout();
+            splitContainerMain.Panel2.SuspendLayout();
+            splitContainerMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewStructure).BeginInit();
+            SuspendLayout();
+            // 
+            // splitContainerMain
+            // 
+            splitContainerMain.Dock = DockStyle.Fill;
+            splitContainerMain.Location = new Point(0, 0);
+            splitContainerMain.Name = "splitContainerMain";
+            // 
+            // splitContainerMain.Panel1
+            // 
+            splitContainerMain.Panel1.Controls.Add(listBoxTables);
+            // 
+            // splitContainerMain.Panel2
+            // 
+            splitContainerMain.Panel2.Controls.Add(dataGridViewStructure);
+            splitContainerMain.Size = new Size(800, 450);
+            splitContainerMain.SplitterDistance = 202;
+            splitContainerMain.TabIndex = 2;
+            // 
+            // listBoxTables
+            // 
+            listBoxTables.Dock = DockStyle.Fill;
+            listBoxTables.FormattingEnabled = true;
+            listBoxTables.ItemHeight = 15;
+            listBoxTables.Location = new Point(0, 0);
+            listBoxTables.Name = "listBoxTables";
+            listBoxTables.Size = new Size(202, 450);
+            listBoxTables.TabIndex = 0;
+            listBoxTables.SelectedIndexChanged += listBoxTables_SelectedIndexChanged;
+            // 
+            // dataGridViewStructure
+            // 
+            dataGridViewStructure.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewStructure.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewStructure.Dock = DockStyle.Fill;
+            dataGridViewStructure.Location = new Point(0, 0);
+            dataGridViewStructure.Name = "dataGridViewStructure";
+            dataGridViewStructure.ReadOnly = true;
+            dataGridViewStructure.Size = new Size(594, 450);
+            dataGridViewStructure.TabIndex = 0;
+            // 
+            // MainForm
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(splitContainerMain);
+            Name = "MainForm";
+            Text = "Управление БД";
+            FormClosed += MainForm_FormClosed;
+            Load += MainForm_Load;
+            splitContainerMain.Panel1.ResumeLayout(false);
+            splitContainerMain.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainerMain).EndInit();
+            splitContainerMain.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridViewStructure).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion
+
+        private ListBox listBoxTables;
+        private SplitContainer splitContainerMain;
+        private DataGridView dataGridViewStructure;
     }
 }

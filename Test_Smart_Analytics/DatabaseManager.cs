@@ -44,6 +44,37 @@ namespace Test_Smart_Analytics
             return tables;
         }
 
+        public DataTable GetTableStructure(string tableName)
+        {
+            var table = new DataTable();
+            try
+            {
+                // Получаем информацию о столбцах
+                string query = $@"
+            SELECT 
+                column_name AS ""Имя столбца"",
+                data_type AS ""Тип данных"",
+                is_nullable AS ""Может быть NULL"",
+                column_default AS ""Значение по умолчанию""
+            FROM information_schema.columns
+            WHERE table_schema = 'public' AND table_name = @tableName
+            ORDER BY ordinal_position;";
+
+                using var cmd = new NpgsqlCommand(query, _connection);
+                cmd.Parameters.AddWithValue("@tableName", tableName);
+
+                using var adapter = new NpgsqlDataAdapter(cmd);
+                adapter.Fill(table);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Ошибка при получении структуры таблицы {tableName}: {ex.Message}");
+            }
+
+            return table;
+        }
+
+
         public void Disconnect()
         {
             _connection?.Close();
