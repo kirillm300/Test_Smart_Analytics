@@ -48,6 +48,79 @@ namespace Test_Smart_Analytics
             }
         }
 
+        private void createToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dbManager == null) return;
+
+            using var form = new CreateTableForm();
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    dbManager.CreateTable(form.TableName, form.Columns);
+                    MessageBox.Show("Таблица успешно создана!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Обновляем список таблиц
+                    var tables = dbManager.GetUserTables();
+                    listBoxTables.Items.Clear();
+                    listBoxTables.Items.AddRange(tables.ToArray());
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при создании таблицы:\n{ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (listBoxTables.SelectedItem == null)
+            {
+                MessageBox.Show("Выберите таблицу для редактирования.", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string tableName = listBoxTables.SelectedItem.ToString();
+
+            try
+            {
+                // Получаем структуру таблицы
+                var columns = dbManager.GetTableColumns(tableName);
+
+                // Открываем форму редактирования
+                using var form = new CreateTableForm();
+                form.Text = $"Редактирование таблицы: {tableName}";
+
+                // Заполняем текущие поля
+                foreach (var col in columns)
+                {
+                    int rowIndex = form.dgvColumns.Rows.Add();
+                    var row = form.dgvColumns.Rows[rowIndex];
+                    row.Cells["Name"].Value = col.Name;
+                    row.Cells["Type"].Value = col.Type;
+                    row.Cells["IsPrimaryKey"].Value = col.IsPrimaryKey;
+                    row.Cells["NotNull"].Value = col.NotNull;
+                }
+                form.txtTableName.Text = tableName;
+
+                // Если пользователь нажал OK
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    dbManager.RecreateTable(tableName, form.TableName, form.Columns);
+                    MessageBox.Show("Изменения успешно применены!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    var tables = dbManager.GetUserTables();
+                    listBoxTables.Items.Clear();
+                    listBoxTables.Items.AddRange(tables.ToArray());
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при редактировании таблицы:\n{ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             dbManager?.Disconnect();

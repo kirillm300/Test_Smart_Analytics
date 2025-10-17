@@ -21,6 +21,103 @@ namespace Test_Smart_Analytics
             _connection.Open();
         }
 
+        public void CreateTable(string tableName, List<ColumnDefinition> columns)
+        {
+            if (columns.Count == 0)
+                throw new Exception("Не указаны поля таблицы.");
+
+            List<string> columnDefs = new();
+            List<string> pkColumns = new();
+
+            foreach (var col in columns)
+            {
+                string notNullPart = col.NotNull ? " NOT NULL" : "";
+                string colDef = $"\"{col.Name}\" {col.Type}{notNullPart}";
+                columnDefs.Add(colDef);
+                if (col.IsPrimaryKey)
+                    pkColumns.Add($"\"{col.Name}\"");
+            }
+
+            if (pkColumns.Count > 0)
+                columnDefs.Add($"PRIMARY KEY ({string.Join(", ", pkColumns)})");
+
+            string sql = $"CREATE TABLE public.\"{tableName}\" (\n{string.Join(",\n", columnDefs)}\n);";
+
+            using var cmd = new NpgsqlCommand(sql, _connection);
+            cmd.ExecuteNonQuery();
+        }
+
+        public List<ColumnDefinition> GetTableColumns(string tableName)
+        {
+            var result = new List<ColumnDefinition>();
+
+            string sql = $@"
+        SELECT
+            column_name,
+            data_type,
+            is_nullable = 'NO' AS not_null,
+            column_name IN (
+                SELECT a.attname
+                FROM pg_index i
+                JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey)
+                WHERE i.indrelid = 'public.""{tableName}""'::regclass AND i.indisprimary
+            ) AS is_primary
+        FROM information_schema.columns
+        WHERE table_name = '{tableName}';";
+
+            using var cmd = new NpgsqlCommand(sql, _connection);
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                result.Add(new ColumnDefinition
+                {
+                    Name = reader.GetString(0),
+                    Type = reader.GetString(1),
+                    NotNull = reader.GetBoolean(2),
+                    IsPrimaryKey = reader.GetBoolean(3)
+                });
+            }
+
+            return result;
+        }
+
+        public void RecreateTable(string oldTableName, string newTableName, List<ColumnDefinition> newColumns)
+        {
+            string tempName = oldTableName + "_old_" + DateTime.Now.ToString("yyyyMMddHHmmss");
+
+            // 1. Переименовываем старую таблицу
+            using (var cmd = new NpgsqlCommand($"ALTER TABLE public.\"{oldTableName}\" RENAME TO \"{tempName}\";", _connection))
+                cmd.ExecuteNonQuery();
+
+            // 2. Создаем новую таблицу
+            CreateTable(newTableName, newColumns);
+
+            // 3. Переносим данные по совпадающим полям
+            var oldCols = GetTableColumns(tempName);
+            var matchingCols = newColumns.FindAll(c => oldCols.Exists(o => o.Name == c.Name));
+
+            if (matchingCols.Count > 0)
+            {
+                string cols = string.Join(", ", matchingCols.ConvertAll(c => $"\"{c.Name}\""));
+                string sqlCopy = $"INSERT INTO public.\"{newTableName}\" ({cols}) SELECT {cols} FROM public.\"{tempName}\";";
+                using var cmdCopy = new NpgsqlCommand(sqlCopy, _connection);
+                cmdCopy.ExecuteNonQuery();
+            }
+
+            // 4. Удаляем старую таблицу
+            using (var cmdDrop = new NpgsqlCommand($"DROP TABLE public.\"{tempName}\";", _connection))
+                cmdDrop.ExecuteNonQuery();
+        }
+
+        public class ColumnDefinition
+        {
+            public string Name { get; set; } = "";
+            public string Type { get; set; } = "";
+            public bool IsPrimaryKey { get; set; }
+            public bool NotNull { get; set; }
+        }
+
         public List<string> GetUserTables()
         {
             var tables = new List<string>();
