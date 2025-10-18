@@ -1,4 +1,5 @@
 using System.Data;
+using System.Windows.Forms;
 
 namespace Test_Smart_Analytics
 {
@@ -9,6 +10,55 @@ namespace Test_Smart_Analytics
         public MainForm()
         {
             InitializeComponent();
+            //splitContainerMain.Padding = new Padding(0, 100, 0, 0);
+            SetupLabels();
+        }
+
+        private void SetupLabels()
+        {
+            int labelHeight = 25;
+            int spacing = 5; // небольшой отступ между меткой и контентом
+
+            // === Левая часть (Список таблиц) ===
+            Label lblTables = new Label
+            {
+                Text = "Список таблиц",
+                Height = labelHeight,
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = SystemColors.ControlLight,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Dock = DockStyle.Top
+            };
+            splitContainerMain.Panel1.Controls.Add(lblTables);
+
+            // Настраиваем ListBox
+            listBoxTables.Location = new Point(0, lblTables.Height + spacing);
+            listBoxTables.Width = splitContainerMain.Panel1.ClientSize.Width;
+            listBoxTables.Height = splitContainerMain.Panel1.ClientSize.Height - lblTables.Height - spacing;
+            listBoxTables.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+
+            splitContainerMain.Panel1.Controls.Add(listBoxTables);
+
+
+            // === Правая часть (Структура таблицы) ===
+            Label lblStructure = new Label
+            {
+                Text = "Структура таблицы",
+                Height = labelHeight,
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = SystemColors.ControlLight,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Dock = DockStyle.Top
+            };
+            splitContainerMain.Panel2.Controls.Add(lblStructure);
+
+            // Настраиваем DataGridView
+            dataGridViewStructure.Location = new Point(0, lblStructure.Height + spacing);
+            dataGridViewStructure.Width = splitContainerMain.Panel2.ClientSize.Width;
+            dataGridViewStructure.Height = splitContainerMain.Panel2.ClientSize.Height - lblStructure.Height - spacing;
+            dataGridViewStructure.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+
+            splitContainerMain.Panel2.Controls.Add(dataGridViewStructure);
         }
 
         private void MainForm_Load(object sender, EventArgs e)

@@ -57,7 +57,7 @@
             // splitContainerMain.Panel2
             // 
             splitContainerMain.Panel2.Controls.Add(dataGridViewStructure);
-            splitContainerMain.Size = new Size(1184, 761);
+            splitContainerMain.Size = new Size(1184, 745);
             splitContainerMain.SplitterDistance = 297;
             splitContainerMain.TabIndex = 2;
             // 
@@ -69,7 +69,7 @@
             listBoxTables.ItemHeight = 15;
             listBoxTables.Location = new Point(0, 0);
             listBoxTables.Name = "listBoxTables";
-            listBoxTables.Size = new Size(297, 761);
+            listBoxTables.Size = new Size(297, 745);
             listBoxTables.TabIndex = 0;
             listBoxTables.SelectedIndexChanged += listBoxTables_SelectedIndexChanged;
             // 
@@ -110,14 +110,14 @@
             dataGridViewStructure.Name = "dataGridViewStructure";
             dataGridViewStructure.ReadOnly = true;
             dataGridViewStructure.RowHeadersWidth = 51;
-            dataGridViewStructure.Size = new Size(883, 761);
+            dataGridViewStructure.Size = new Size(883, 745);
             dataGridViewStructure.TabIndex = 0;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1184, 761);
+            ClientSize = new Size(1184, 745);
             Controls.Add(splitContainerMain);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
@@ -142,5 +142,6 @@
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem deleteToolStripMenuItem;
         private ToolStripMenuItem createToolStripMenuItem;
+
     }
 }
