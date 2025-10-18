@@ -48,7 +48,6 @@
             // 
             splitContainerMain.Dock = DockStyle.Fill;
             splitContainerMain.Location = new Point(0, 0);
-            splitContainerMain.Margin = new Padding(3, 4, 3, 4);
             splitContainerMain.Name = "splitContainerMain";
             // 
             // splitContainerMain.Panel1
@@ -58,9 +57,8 @@
             // splitContainerMain.Panel2
             // 
             splitContainerMain.Panel2.Controls.Add(dataGridViewStructure);
-            splitContainerMain.Size = new Size(914, 600);
-            splitContainerMain.SplitterDistance = 230;
-            splitContainerMain.SplitterWidth = 5;
+            splitContainerMain.Size = new Size(1184, 761);
+            splitContainerMain.SplitterDistance = 297;
             splitContainerMain.TabIndex = 2;
             // 
             // listBoxTables
@@ -68,10 +66,10 @@
             listBoxTables.ContextMenuStrip = contextMenuStripTables;
             listBoxTables.Dock = DockStyle.Fill;
             listBoxTables.FormattingEnabled = true;
+            listBoxTables.ItemHeight = 15;
             listBoxTables.Location = new Point(0, 0);
-            listBoxTables.Margin = new Padding(3, 4, 3, 4);
             listBoxTables.Name = "listBoxTables";
-            listBoxTables.Size = new Size(230, 600);
+            listBoxTables.Size = new Size(297, 761);
             listBoxTables.TabIndex = 0;
             listBoxTables.SelectedIndexChanged += listBoxTables_SelectedIndexChanged;
             // 
@@ -80,26 +78,26 @@
             contextMenuStripTables.ImageScalingSize = new Size(20, 20);
             contextMenuStripTables.Items.AddRange(new ToolStripItem[] { editToolStripMenuItem, deleteToolStripMenuItem, createToolStripMenuItem });
             contextMenuStripTables.Name = "contextMenuStripTables";
-            contextMenuStripTables.Size = new Size(241, 76);
+            contextMenuStripTables.Size = new Size(203, 70);
             // 
             // editToolStripMenuItem
             // 
             editToolStripMenuItem.Name = "editToolStripMenuItem";
-            editToolStripMenuItem.Size = new Size(240, 24);
+            editToolStripMenuItem.Size = new Size(202, 22);
             editToolStripMenuItem.Text = "Редактировать таблицу";
             editToolStripMenuItem.Click += editToolStripMenuItem_Click;
             // 
             // deleteToolStripMenuItem
             // 
             deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            deleteToolStripMenuItem.Size = new Size(240, 24);
+            deleteToolStripMenuItem.Size = new Size(202, 22);
             deleteToolStripMenuItem.Text = "Удалить таблицу";
             deleteToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
             // 
             // createToolStripMenuItem
             // 
             createToolStripMenuItem.Name = "createToolStripMenuItem";
-            createToolStripMenuItem.Size = new Size(240, 24);
+            createToolStripMenuItem.Size = new Size(202, 22);
             createToolStripMenuItem.Text = "Добавить таблицу в БД";
             createToolStripMenuItem.Click += createToolStripMenuItem_Click;
             // 
@@ -109,20 +107,18 @@
             dataGridViewStructure.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewStructure.Dock = DockStyle.Fill;
             dataGridViewStructure.Location = new Point(0, 0);
-            dataGridViewStructure.Margin = new Padding(3, 4, 3, 4);
             dataGridViewStructure.Name = "dataGridViewStructure";
             dataGridViewStructure.ReadOnly = true;
             dataGridViewStructure.RowHeadersWidth = 51;
-            dataGridViewStructure.Size = new Size(679, 600);
+            dataGridViewStructure.Size = new Size(883, 761);
             dataGridViewStructure.TabIndex = 0;
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(914, 600);
+            ClientSize = new Size(1184, 761);
             Controls.Add(splitContainerMain);
-            Margin = new Padding(3, 4, 3, 4);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Управление БД";
