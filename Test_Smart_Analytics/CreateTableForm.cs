@@ -31,7 +31,7 @@ namespace Test_Smart_Analytics
             InitializeComponent();
             InitUI();
 
-            // обработка ошибок DataGridViewComboBoxCell
+            // обработка ошибок DataGridViewComboBoxCell (ловим типы данных, не поддерживаемые в моем приложении)
             _dgvColumns.DataError += DgvColumns_DataError;
         }
 
@@ -50,7 +50,6 @@ namespace Test_Smart_Analytics
                 MessageBoxIcon.Warning
             );
 
-            // Если это ComboBoxColumn — ставим первый допустимый элемент
             if (_dgvColumns.Columns[e.ColumnIndex] is DataGridViewComboBoxColumn comboCol &&
                 comboCol.Items.Count > 0 && e.RowIndex >= 0)
             {
@@ -63,9 +62,24 @@ namespace Test_Smart_Analytics
             Text = "Создание таблицы";
             Width = 700;
             Height = 450;
+            StartPosition = FormStartPosition.CenterParent;
 
-            Label lbl = new Label { Text = "Имя таблицы:", Dock = DockStyle.Top, Height = 25 };
-            _txtTableName = new TextBox { Dock = DockStyle.Top, Height = 25 };
+            Label lblTableName = new Label
+            {
+                Text = "Имя таблицы:",
+                Dock = DockStyle.Top,
+                Height = 25,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Font = new Font("Segoe UI", 9, FontStyle.Regular)
+            };
+
+            _txtTableName = new TextBox
+            {
+                Dock = DockStyle.Top,
+                Height = 25,
+                BackColor = Color.LightGray
+            };
+            SetPlaceholder(_txtTableName, "Введите имя таблицы...");
 
             _dgvColumns = new DataGridView
             {
@@ -73,57 +87,89 @@ namespace Test_Smart_Analytics
                 AllowUserToAddRows = true,
                 AllowUserToDeleteRows = true,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                RowHeadersVisible = false
             };
 
-            dgvColumns.Columns.Add("Name", "Имя поля");
-            dgvColumns.Columns.Add(new DataGridViewComboBoxColumn()
+            _dgvColumns.Columns.Add("Name", "Имя поля");
+            _dgvColumns.Columns.Add(new DataGridViewComboBoxColumn
             {
                 HeaderText = "Тип данных",
                 Name = "Type",
                 DataSource = new List<string> { "integer", "bigint", "double precision", "text", "timestamp" }
             });
-            dgvColumns.Columns.Add(new DataGridViewCheckBoxColumn()
+            _dgvColumns.Columns.Add(new DataGridViewCheckBoxColumn
             {
                 HeaderText = "Первичный ключ",
                 Name = "IsPrimaryKey"
             });
-            dgvColumns.Columns.Add(new DataGridViewCheckBoxColumn()
+            _dgvColumns.Columns.Add(new DataGridViewCheckBoxColumn
             {
                 HeaderText = "NOT NULL",
                 Name = "NotNull"
             });
 
-            // Кнопки управления
+            _dgvColumns.DataError += (s, e) =>
+            {
+                e.ThrowException = false;
+                MessageBox.Show(
+                    $"Недопустимое значение в поле: {_dgvColumns.CurrentRow?.Cells["Name"].Value}",
+                    "Ошибка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+            };
+
             FlowLayoutPanel buttonsPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Bottom,
-                Height = 40,
-                FlowDirection = FlowDirection.RightToLeft
+                Height = 45,
+                FlowDirection = FlowDirection.RightToLeft,
+                Padding = new Padding(5)
             };
 
-            btnOk = new Button { Text = "Создать", Width = 100 };
-            btnCancel = new Button { Text = "Отмена", Width = 100 };
-            btnMoveUp = new Button { Text = "⬆️ Вверх", Width = 100 };
-            btnMoveDown = new Button { Text = "⬇️ Вниз", Width = 100 };
+            btnOk = new Button { Text = "Создать", Width = 100, Height = 35 };
+            btnCancel = new Button { Text = "Отмена", Width = 100, Height = 35 };
+            btnMoveUp = new Button { Text = "Вверх", Width = 100, Height = 35 };
+            btnMoveDown = new Button { Text = "Вниз", Width = 100, Height = 35 };
 
             btnOk.Click += BtnOk_Click;
             btnCancel.Click += (s, e) => DialogResult = DialogResult.Cancel;
             btnMoveUp.Click += BtnMoveUp_Click;
             btnMoveDown.Click += BtnMoveDown_Click;
 
-            buttonsPanel.Controls.Add(btnCancel);
-            buttonsPanel.Controls.Add(btnOk);
-            buttonsPanel.Controls.Add(btnMoveDown);
-            buttonsPanel.Controls.Add(btnMoveUp);
+            buttonsPanel.Controls.AddRange(new Control[] { btnCancel, btnOk, btnMoveDown, btnMoveUp });
 
-            Controls.Add(dgvColumns);
-            Controls.Add(txtTableName);
-            Controls.Add(lbl);
+            Controls.Add(_dgvColumns);
+            Controls.Add(_txtTableName);
+            Controls.Add(lblTableName);
             Controls.Add(buttonsPanel);
         }
 
-        // === Перемещение строк вверх ===
+        private void SetPlaceholder(TextBox textBox, string placeholder)
+        {
+            textBox.Text = placeholder;
+            textBox.ForeColor = Color.Gray;
+
+            textBox.GotFocus += (s, e) =>
+            {
+                if (textBox.Text == placeholder)
+                {
+                    textBox.Text = "";
+                    textBox.ForeColor = Color.Black;
+                }
+            };
+
+            textBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(textBox.Text))
+                {
+                    textBox.Text = placeholder;
+                    textBox.ForeColor = Color.Gray;
+                }
+            };
+        }
+
         private void BtnMoveUp_Click(object sender, EventArgs e)
         {
             if (dgvColumns.CurrentRow == null || dgvColumns.CurrentRow.Index == 0)
@@ -136,7 +182,6 @@ namespace Test_Smart_Analytics
             dgvColumns.CurrentCell = dgvColumns.Rows[index - 1].Cells[0];
         }
 
-        // === Перемещение строк вниз ===
         private void BtnMoveDown_Click(object sender, EventArgs e)
         {
             if (dgvColumns.CurrentRow == null || dgvColumns.CurrentRow.Index == dgvColumns.Rows.Count - 2)

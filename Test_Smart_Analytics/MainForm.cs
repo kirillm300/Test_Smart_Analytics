@@ -10,9 +10,68 @@ namespace Test_Smart_Analytics
         public MainForm()
         {
             InitializeComponent();
-            //splitContainerMain.Padding = new Padding(0, 100, 0, 0);
             SetupLabels();
+            SetupMenu();
         }
+        private void SetupMenu()
+        {
+            // Создаём MenuStrip
+            MenuStrip menu = new MenuStrip();
+
+            // === Вкладка "Помощь" ===
+            ToolStripMenuItem helpItem = new ToolStripMenuItem("Помощь");
+
+            // Подпункт "О программе"
+            ToolStripMenuItem aboutItem = new ToolStripMenuItem("О программе");
+            aboutItem.Click += (s, e) =>
+            {
+                MessageBox.Show(
+                    "Это приложение для редактирования таблиц в базе данных - тестовое задание для Смарт Аналитикс." +
+                    "\n" +
+                    "\n" +
+                    "Версия 1.0",
+                    "О программе",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            };
+
+            // Подпункт "Руководство пользователя"
+            ToolStripMenuItem guideItem = new ToolStripMenuItem("Руководство пользователя");
+            guideItem.Click += (s, e) =>
+            {
+                MessageBox.Show(
+                    "1. Выберите таблицу слева, чтобы увидеть её структуру справа.\n" +
+                    "2. Для совершения действий с таблицами используйте контекстное меню, вызываемое ПКМ в области слева.\n" +
+                    "3. Для редактирования таблицы выберите её, вызовите контекстное меню и нажмите 'Редактировать'.\n" +
+                    "4. Для удаления таблицы выберите её, вызовите контекстное меню и нажмите 'Удалить', подтвердите удаление.\n" +
+                    "5. Для создания таблицы вызовите контекстное меню в области слева и нажмите 'Добавить таблицу в БД'.\n" +
+                    "6. При возникновении ошибок приложение покажет сообщения в диалоговом окне.\n" +
+                    "7. Типы данных, доступные при создании/редактировании таблиц: integer, bigint, double precision, text, timestamp.\n" +
+                    "8. Во время создания/редактирования таблиц можно менять порядок полей и задавать NOT NULL для каждого поля.",
+                    "Руководство пользователя",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            };
+
+            // Добавляем подпункты в "Помощь"
+            helpItem.DropDownItems.Add(aboutItem);
+            helpItem.DropDownItems.Add(guideItem);
+
+            // Добавляем вкладку "Помощь" в MenuStrip
+            menu.Items.Add(helpItem);
+
+            // Dock сверху
+            menu.Dock = DockStyle.Top;
+
+            // Объявляем как главное меню формы
+            this.MainMenuStrip = menu;
+
+            // Добавляем на форму
+            this.Controls.Add(menu);
+        }
+
 
         private void SetupLabels()
         {
