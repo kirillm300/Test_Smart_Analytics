@@ -6,13 +6,22 @@ namespace Test_Smart_Analytics
     public partial class MainForm : Form
     {
         private DatabaseManager? dbManager;
-        private readonly string _databaseName;
         private ToolStripMenuItem editTableItem;
         private ToolStripMenuItem deleteTableItem;
+        private readonly string _host;
+        private readonly string _port;
+        private readonly string _databaseName;
+        private readonly string _username;
+        private readonly string _password;
 
-        public MainForm(string databaseName)
+
+        public MainForm(string host, string port, string databaseName, string username, string password)
         {
+            _host = host;
+            _port = port;
             _databaseName = databaseName;
+            _username = username;
+            _password = password;
 
             InitializeComponent();
             SetupLabels();
@@ -47,7 +56,7 @@ namespace Test_Smart_Analytics
             aboutItem.Click += (s, e) =>
             {
                 MessageBox.Show(
-                    "Это приложение для редактирования таблиц в базе данных — тестовое задание для Smart Analytics.\n\nВерсия 1.0",
+                    "Это приложение для редактирования таблиц в базе данных - тестовое задание для Smart Analytics.\n\nВерсия 1.0",
                     "О программе",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
@@ -58,12 +67,12 @@ namespace Test_Smart_Analytics
             guideItem.Click += (s, e) =>
             {
                 MessageBox.Show(
-                    "1. При запуске введите имя базы данных для подключения.\n" +
+                    "1. При запуске введите хост, порт, имя БД, пользователя и пароль для подключения.\n" +
                     "2. В левой части отображается список таблиц выбранной БД.\n" +
-                    "3. Чтобы создать таблицу, выберите пункт меню «Таблица ? Создать таблицу».\n" +
-                    "4. Чтобы редактировать или удалить таблицу, выберите её в списке слева.\n" +
+                    "3. Чтобы создать таблицу, выберите пункт меню «Таблица => Создать таблицу».\n" +
+                    "4. Чтобы редактировать или удалить таблицу, выберите её в списке слева, а затем перейдите в пункт меню «Таблица».\n" +
                     "5. Действия также можно выполнять через контекстное меню по правому клику.\n" +
-                    "6. При ошибках приложение покажет диалог с подробностями.",
+                    "6. При ошибках приложение покажет диалоговое окно с подробностями.",
                     "Руководство пользователя",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
@@ -128,7 +137,7 @@ namespace Test_Smart_Analytics
         {
             try
             {
-                string connString = $"Host=localhost;Port=5432;Database={_databaseName};Username=postgres;Password=145311";
+                string connString = $"Host={_host};Port={_port};Database={_databaseName};Username={_username};Password={_password}";
                 dbManager = new DatabaseManager(connString);
                 dbManager.Connect();
 
@@ -229,9 +238,28 @@ namespace Test_Smart_Analytics
                     dbManager.RecreateTable(tableName, form.TableName, form.Columns);
                     MessageBox.Show("Изменения успешно применены!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+                    // ?? Обновляем список таблиц
                     var tables = dbManager.GetUserTables();
                     listBoxTables.Items.Clear();
                     listBoxTables.Items.AddRange(tables.ToArray());
+
+                    // ?? Автоматически выделяем отредактированную таблицу (если имя не изменилось)
+                    string newTableName = form.TableName;
+                    int index = listBoxTables.Items.IndexOf(newTableName);
+                    if (index >= 0)
+                        listBoxTables.SelectedIndex = index;
+
+                    // ?? Перезагружаем структуру таблицы справа
+                    try
+                    {
+                        DataTable structure = dbManager.GetTableStructure(newTableName);
+                        dataGridViewStructure.DataSource = structure;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка при обновлении структуры таблицы:\n{ex.Message}",
+                            "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
             catch (Exception ex)

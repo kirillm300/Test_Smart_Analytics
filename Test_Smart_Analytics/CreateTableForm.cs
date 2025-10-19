@@ -90,6 +90,13 @@ namespace Test_Smart_Analytics
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 RowHeadersVisible = false
             };
+            _dgvColumns.CellValidating += DgvColumns_CellValidating;
+            _dgvColumns.CellValueChanged += DgvColumns_CellValueChanged;
+            _dgvColumns.CurrentCellDirtyStateChanged += (s, e) =>
+            {
+                if (_dgvColumns.IsCurrentCellDirty)
+                    _dgvColumns.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            };
 
             _dgvColumns.Columns.Add("Name", "Имя поля");
             _dgvColumns.Columns.Add(new DataGridViewComboBoxColumn
@@ -146,6 +153,60 @@ namespace Test_Smart_Analytics
             Controls.Add(_txtTableName);
             Controls.Add(lblTableName);
             Controls.Add(buttonsPanel);
+        }
+
+        private void DgvColumns_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            var grid = (DataGridView)sender;
+
+            if (grid.Columns[e.ColumnIndex].Name == "IsPrimaryKey")
+            {
+                var isPkCell = grid.Rows[e.RowIndex].Cells["IsPrimaryKey"];
+                var notNullCell = grid.Rows[e.RowIndex].Cells["NotNull"];
+
+                bool isPk = isPkCell.Value is bool value && value;
+
+                if (isPk)
+                {
+                    notNullCell.Value = true;
+                    notNullCell.ReadOnly = true;
+                    notNullCell.Style.BackColor = Color.LightGray;
+                }
+                else
+                {
+                    notNullCell.ReadOnly = false;
+                    notNullCell.Style.BackColor = Color.White;
+                }
+            }
+        }
+
+
+        private void DgvColumns_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            if (_dgvColumns.Columns[e.ColumnIndex].Name == "Name")
+            {
+                string input = e.FormattedValue?.ToString() ?? "";
+
+                if (string.IsNullOrWhiteSpace(input))
+                    return;
+
+                if (input.Contains(" ") || !System.Text.RegularExpressions.Regex.IsMatch(input, @"^[A-Za-z_][A-Za-z0-9_]*$"))
+                {
+                    MessageBox.Show(
+                        "Недопустимое имя поля!\n" +
+                        "Имя поля может содержать только буквы, цифры и символ подчёркивания, " +
+                        "и не может начинаться с цифры или содержать пробелы.",
+                        "Ошибка ввода",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+
+                    e.Cancel = true;
+                }
+            }
         }
 
         private void SetPlaceholder(TextBox textBox, string placeholder)

@@ -8,16 +8,17 @@ namespace Test_Smart_Analytics
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Сначала показываем окно выбора базы
             using (var dbForm = new DatabaseSelectionForm())
             {
-                if (dbForm.ShowDialog() != DialogResult.OK)
-                    return;
-
-                string dbName = dbForm.DatabaseName;
-
-                // Передаем имя БД в MainForm
-                Application.Run(new MainForm(dbName));
+                if (dbForm.ShowDialog() == DialogResult.OK)
+                {
+                    Application.Run(new MainForm(
+                        dbForm.Host,
+                        dbForm.Port,
+                        dbForm.DatabaseName,
+                        dbForm.Username,
+                        dbForm.Password));
+                }
             }
         }
     }
