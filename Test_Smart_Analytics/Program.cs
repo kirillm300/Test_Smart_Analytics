@@ -5,8 +5,20 @@ namespace Test_Smart_Analytics
         [STAThread]
         static void Main()
         {
-            ApplicationConfiguration.Initialize();
-            Application.Run(new MainForm());
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            // Сначала показываем окно выбора базы
+            using (var dbForm = new DatabaseSelectionForm())
+            {
+                if (dbForm.ShowDialog() != DialogResult.OK)
+                    return;
+
+                string dbName = dbForm.DatabaseName;
+
+                // Передаем имя БД в MainForm
+                Application.Run(new MainForm(dbName));
+            }
         }
     }
 }

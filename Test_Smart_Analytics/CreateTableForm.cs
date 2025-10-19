@@ -128,8 +128,10 @@ namespace Test_Smart_Analytics
                 Padding = new Padding(5)
             };
 
-            btnOk = new Button { Text = "Создать", Width = 100, Height = 35 };
+            btnOk = new Button { Text = "Сохранить", Width = 100, Height = 35 };
+            AcceptButton = btnOk;
             btnCancel = new Button { Text = "Отмена", Width = 100, Height = 35 };
+            CancelButton = btnCancel;
             btnMoveUp = new Button { Text = "Вверх", Width = 100, Height = 35 };
             btnMoveDown = new Button { Text = "Вниз", Width = 100, Height = 35 };
 

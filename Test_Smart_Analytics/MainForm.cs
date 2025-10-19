@@ -6,79 +6,86 @@ namespace Test_Smart_Analytics
     public partial class MainForm : Form
     {
         private DatabaseManager? dbManager;
+        private readonly string _databaseName;
+        private ToolStripMenuItem editTableItem;
+        private ToolStripMenuItem deleteTableItem;
 
-        public MainForm()
+        public MainForm(string databaseName)
         {
+            _databaseName = databaseName;
+
             InitializeComponent();
             SetupLabels();
             SetupMenu();
         }
+
         private void SetupMenu()
         {
-            // Создаём MenuStrip
             MenuStrip menu = new MenuStrip();
 
-            // === Вкладка "Помощь" ===
+            ToolStripMenuItem tableItem = new ToolStripMenuItem("Таблица");
+
+            ToolStripMenuItem createTableItem = new ToolStripMenuItem("Создать таблицу");
+            createTableItem.Click += createToolStripMenuItem_Click;
+
+            editTableItem = new ToolStripMenuItem("Редактировать таблицу");
+            editTableItem.Enabled = false;
+            editTableItem.Click += editToolStripMenuItem_Click;
+
+            deleteTableItem = new ToolStripMenuItem("Удалить таблицу");
+            deleteTableItem.Enabled = false;
+            deleteTableItem.Click += deleteToolStripMenuItem_Click;
+
+            tableItem.DropDownItems.Add(createTableItem);
+            tableItem.DropDownItems.Add(editTableItem);
+            tableItem.DropDownItems.Add(deleteTableItem);
+            menu.Items.Add(tableItem);
+
             ToolStripMenuItem helpItem = new ToolStripMenuItem("Помощь");
 
-            // Подпункт "О программе"
             ToolStripMenuItem aboutItem = new ToolStripMenuItem("О программе");
             aboutItem.Click += (s, e) =>
             {
                 MessageBox.Show(
-                    "Это приложение для редактирования таблиц в базе данных - тестовое задание для Смарт Аналитикс." +
-                    "\n" +
-                    "\n" +
-                    "Версия 1.0",
+                    "Это приложение для редактирования таблиц в базе данных — тестовое задание для Smart Analytics.\n\nВерсия 1.0",
                     "О программе",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
                 );
             };
 
-            // Подпункт "Руководство пользователя"
             ToolStripMenuItem guideItem = new ToolStripMenuItem("Руководство пользователя");
             guideItem.Click += (s, e) =>
             {
                 MessageBox.Show(
-                    "1. Выберите таблицу слева, чтобы увидеть её структуру справа.\n" +
-                    "2. Для совершения действий с таблицами используйте контекстное меню, вызываемое ПКМ в области слева.\n" +
-                    "3. Для редактирования таблицы выберите её, вызовите контекстное меню и нажмите 'Редактировать'.\n" +
-                    "4. Для удаления таблицы выберите её, вызовите контекстное меню и нажмите 'Удалить', подтвердите удаление.\n" +
-                    "5. Для создания таблицы вызовите контекстное меню в области слева и нажмите 'Добавить таблицу в БД'.\n" +
-                    "6. При возникновении ошибок приложение покажет сообщения в диалоговом окне.\n" +
-                    "7. Типы данных, доступные при создании/редактировании таблиц: integer, bigint, double precision, text, timestamp.\n" +
-                    "8. Во время создания/редактирования таблиц можно менять порядок полей и задавать NOT NULL для каждого поля.",
+                    "1. При запуске введите имя базы данных для подключения.\n" +
+                    "2. В левой части отображается список таблиц выбранной БД.\n" +
+                    "3. Чтобы создать таблицу, выберите пункт меню «Таблица ? Создать таблицу».\n" +
+                    "4. Чтобы редактировать или удалить таблицу, выберите её в списке слева.\n" +
+                    "5. Действия также можно выполнять через контекстное меню по правому клику.\n" +
+                    "6. При ошибках приложение покажет диалог с подробностями.",
                     "Руководство пользователя",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
                 );
             };
 
-            // Добавляем подпункты в "Помощь"
             helpItem.DropDownItems.Add(aboutItem);
             helpItem.DropDownItems.Add(guideItem);
-
-            // Добавляем вкладку "Помощь" в MenuStrip
             menu.Items.Add(helpItem);
 
-            // Dock сверху
             menu.Dock = DockStyle.Top;
-
-            // Объявляем как главное меню формы
             this.MainMenuStrip = menu;
-
-            // Добавляем на форму
             this.Controls.Add(menu);
         }
+
 
 
         private void SetupLabels()
         {
             int labelHeight = 25;
-            int spacing = 5; // небольшой отступ между меткой и контентом
+            int spacing = 5;
 
-            // === Левая часть (Список таблиц) ===
             Label lblTables = new Label
             {
                 Text = "Список таблиц",
@@ -90,7 +97,6 @@ namespace Test_Smart_Analytics
             };
             splitContainerMain.Panel1.Controls.Add(lblTables);
 
-            // Настраиваем ListBox
             listBoxTables.Location = new Point(0, lblTables.Height + spacing);
             listBoxTables.Width = splitContainerMain.Panel1.ClientSize.Width;
             listBoxTables.Height = splitContainerMain.Panel1.ClientSize.Height - lblTables.Height - spacing;
@@ -99,7 +105,6 @@ namespace Test_Smart_Analytics
             splitContainerMain.Panel1.Controls.Add(listBoxTables);
 
 
-            // === Правая часть (Структура таблицы) ===
             Label lblStructure = new Label
             {
                 Text = "Структура таблицы",
@@ -111,7 +116,6 @@ namespace Test_Smart_Analytics
             };
             splitContainerMain.Panel2.Controls.Add(lblStructure);
 
-            // Настраиваем DataGridView
             dataGridViewStructure.Location = new Point(0, lblStructure.Height + spacing);
             dataGridViewStructure.Width = splitContainerMain.Panel2.ClientSize.Width;
             dataGridViewStructure.Height = splitContainerMain.Panel2.ClientSize.Height - lblStructure.Height - spacing;
@@ -124,7 +128,7 @@ namespace Test_Smart_Analytics
         {
             try
             {
-                string connString = "Host=localhost;Port=5432;Database=Test;Username=postgres;Password=145311";
+                string connString = $"Host=localhost;Port=5432;Database={_databaseName};Username=postgres;Password=145311";
                 dbManager = new DatabaseManager(connString);
                 dbManager.Connect();
 
@@ -134,15 +138,27 @@ namespace Test_Smart_Analytics
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при подключении к БД: {ex.Message}",
+                MessageBox.Show($"Ошибка при подключении к БД '{_databaseName}'",
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                
+                Application.Exit();
             }
         }
 
         private void listBoxTables_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (dbManager == null || listBoxTables.SelectedItem == null)
+            if (dbManager == null)
                 return;
+
+            bool hasSelection = listBoxTables.SelectedItem != null;
+            editTableItem.Enabled = hasSelection;
+            deleteTableItem.Enabled = hasSelection;
+
+            if (!hasSelection)
+            {
+                dataGridViewStructure.DataSource = null;
+                return;
+            }
 
             string tableName = listBoxTables.SelectedItem.ToString()!;
             try
@@ -169,7 +185,6 @@ namespace Test_Smart_Analytics
                     dbManager.CreateTable(form.TableName, form.Columns);
                     MessageBox.Show("Таблица успешно создана!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    // Обновляем список таблиц
                     var tables = dbManager.GetUserTables();
                     listBoxTables.Items.Clear();
                     listBoxTables.Items.AddRange(tables.ToArray());
@@ -249,7 +264,6 @@ namespace Test_Smart_Analytics
                 dbManager.DropTable(tableName);
                 MessageBox.Show("Таблица успешно удалена!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Обновляем список таблиц
                 var tables = dbManager.GetUserTables();
                 listBoxTables.Items.Clear();
                 listBoxTables.Items.AddRange(tables.ToArray());
