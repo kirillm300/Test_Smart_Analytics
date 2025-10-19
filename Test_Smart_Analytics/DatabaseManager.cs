@@ -102,7 +102,6 @@ namespace Test_Smart_Analytics
                 cmdCopy.ExecuteNonQuery();
             }
 
-            // 4. Удаляем старую таблицу
             using (var cmdDrop = new NpgsqlCommand($"DROP TABLE public.\"{tempName}\";", _connection))
                 cmdDrop.ExecuteNonQuery();
         }
@@ -151,7 +150,6 @@ namespace Test_Smart_Analytics
             var table = new DataTable();
             try
             {
-                // Получаем информацию о столбцах
                 string query = $@"
             SELECT 
                 column_name AS ""Имя столбца"",

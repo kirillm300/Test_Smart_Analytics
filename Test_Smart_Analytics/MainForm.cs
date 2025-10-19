@@ -238,18 +238,15 @@ namespace Test_Smart_Analytics
                     dbManager.RecreateTable(tableName, form.TableName, form.Columns);
                     MessageBox.Show("Изменения успешно применены!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    // ?? Обновляем список таблиц
                     var tables = dbManager.GetUserTables();
                     listBoxTables.Items.Clear();
                     listBoxTables.Items.AddRange(tables.ToArray());
 
-                    // ?? Автоматически выделяем отредактированную таблицу (если имя не изменилось)
                     string newTableName = form.TableName;
                     int index = listBoxTables.Items.IndexOf(newTableName);
                     if (index >= 0)
                         listBoxTables.SelectedIndex = index;
 
-                    // ?? Перезагружаем структуру таблицы справа
                     try
                     {
                         DataTable structure = dbManager.GetTableStructure(newTableName);

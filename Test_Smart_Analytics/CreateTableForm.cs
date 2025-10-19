@@ -31,7 +31,6 @@ namespace Test_Smart_Analytics
             InitializeComponent();
             InitUI();
 
-            // обработка ошибок DataGridViewComboBoxCell (ловим типы данных, не поддерживаемые в моем приложении)
             _dgvColumns.DataError += DgvColumns_DataError;
         }
 
